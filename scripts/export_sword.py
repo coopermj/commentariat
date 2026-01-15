@@ -77,8 +77,8 @@ def _roman_to_number_prefix(name: str) -> str:
     return name
 
 
-def _list_verses_for_book(book: str) -> List[Tuple[int, int]]:
-    output = _run_diatheke(["-b", "KJV", "-f", "plain", "-k", book])
+def _list_verses_for_book(book: str, env: Dict[str, str]) -> List[Tuple[int, int]]:
+    output = _run_diatheke(["-b", "KJV", "-f", "plain", "-k", book], env=env)
     refs: List[Tuple[int, int]] = []
     pattern = re.compile(r"^.+?\s+(\d+):(\d+):")
     for line in output.splitlines():
@@ -135,7 +135,7 @@ def export_module(
             except ValueError:
                 print(f"Skipping unknown book: {raw_name}", file=sys.stderr)
                 continue
-            refs = _list_verses_for_book(canonical_name)
+            refs = _list_verses_for_book(canonical_name, env)
             for chapter, verse in refs:
                 key = f"{canonical_name} {chapter}:{verse}"
                 text = _run_diatheke(
