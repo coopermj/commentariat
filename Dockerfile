@@ -31,5 +31,5 @@ ENV DATABASE_PATH=/data/commentariat.db
 # Expose port
 EXPOSE 8000
 
-# Default command
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Default command - startup script handles DB init and ingestion
+CMD ["python", "scripts/startup.py"]
