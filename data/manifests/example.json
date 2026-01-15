@@ -1,0 +1,11 @@
+{
+  "commentary": {
+    "name": "Example Commentary",
+    "slug": "example",
+    "description": "Placeholder data for local testing.",
+    "source": "Local sample",
+    "license": "Public Domain",
+    "language": "en"
+  },
+  "entries_file": "../entries/example.ndjson"
+}

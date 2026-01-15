@@ -1,0 +1,11 @@
+{
+  "commentary": {
+    "name": "Calvin's Collected Commentaries",
+    "slug": "calvincommentaries",
+    "description": "John Calvin's commentaries on many books of the Bible.",
+    "source": "SWORD: CalvinCommentaries (CCEL)",
+    "license": "Public Domain",
+    "language": "en"
+  },
+  "entries_file": "../entries/calvincommentaries.ndjson"
+}
