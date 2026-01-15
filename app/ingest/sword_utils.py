@@ -199,8 +199,8 @@ def iter_sword_entries(
     for canonical_name in canonical_books:
 
         logger.debug("Processing book: %s", canonical_name)
-        # Use system KJV (no custom env) for verse listing
-        refs = list_verses_for_book(canonical_name)
+        # Use same SWORD_PATH for KJV (now bundled with other modules)
+        refs = list_verses_for_book(canonical_name, env=module_env)
 
         for chapter, verse in refs:
             key = f"{canonical_name} {chapter}:{verse}"

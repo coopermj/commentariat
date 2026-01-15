@@ -1,9 +1,8 @@
 FROM python:3.13-slim
 
-# Install diatheke (SWORD CLI) and KJV module
+# Install diatheke (SWORD CLI)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     diatheke \
-    sword-text-kjv \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
