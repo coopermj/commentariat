@@ -25,8 +25,8 @@ COPY scripts/ /app/scripts/
 
 # Set environment variables
 ENV PYTHONPATH=/app
-ENV SWORD_PATH=/app/data/sword
 ENV DATABASE_PATH=/data/commentariat.db
+# Note: SWORD_PATH is set dynamically per-module, not globally
 
 # Expose port
 EXPOSE 8000

@@ -50,7 +50,7 @@ def run_ingestion() -> None:
     logger.info("KJV test - returncode: %d, stdout: %s, stderr: %s",
                 result.returncode, result.stdout[:200] if result.stdout else "empty", result.stderr[:200] if result.stderr else "empty")
 
-    sword_path = os.environ.get("SWORD_PATH", "/app/data/sword")
+    sword_path = "/app/data/sword"
     mods_dir = Path(sword_path) / "mods.d"
 
     if not mods_dir.exists():
