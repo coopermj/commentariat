@@ -205,3 +205,13 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Commentariat data artifacts
+data/commentariat.db
+data/entries/*
+!data/entries/
+!data/entries/example.ndjson
+
+# SWORD module data (extracted), but keep zip files for deployment
+data/sword/mods.d/
+data/sword/modules/

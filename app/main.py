@@ -6,6 +6,7 @@ from fastapi import FastAPI, HTTPException
 
 from app.books import list_books, normalize_book
 from app.db import init_db
+from app.logging import configure_logging, get_logger
 from app.storage import (
     get_commentary,
     list_commentaries,
@@ -13,12 +14,17 @@ from app.storage import (
     list_entries_for_verse,
 )
 
+logger = get_logger(__name__)
+
 app = FastAPI(title="Commentariat API", version="0.1.0")
 
 
 @app.on_event("startup")
 def startup() -> None:
+    configure_logging()
+    logger.info("Initializing database")
     init_db()
+    logger.info("Commentariat API started")
 
 
 def _serialize_commentary(raw: dict) -> dict:

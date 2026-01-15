@@ -8,6 +8,9 @@ from typing import Dict, Iterator, Tuple
 
 from app.books import normalize_book
 from app.db import get_connection
+from app.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class IngestError(ValueError):
@@ -116,6 +119,7 @@ def _upsert_commentary(connection, meta: Dict[str, object]) -> int:
 
 
 def ingest_json(path: Path, replace: bool = False) -> int:
+    logger.info("Starting ingestion from %s", path)
     base_dir = path.parent
     with path.open("r", encoding="utf-8") as handle:
         payload = json.load(handle)
@@ -132,6 +136,7 @@ def ingest_json(path: Path, replace: bool = False) -> int:
     inserted = 0
     with get_connection() as connection:
         commentary_id = _upsert_commentary(connection, meta)
+        logger.info("Upserting commentary: %s (id=%d)", meta.get("slug"), commentary_id)
         if replace:
             connection.execute(
                 "DELETE FROM entries WHERE commentary_id = ?",
@@ -186,5 +191,6 @@ def ingest_json(path: Path, replace: bool = False) -> int:
             inserted += len(buffer)
 
         connection.commit()
+        logger.info("Ingestion complete: %d entries inserted", inserted)
 
     return inserted

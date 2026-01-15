@@ -9,6 +9,7 @@ from pathlib import Path
 from app.db import init_db
 from app.ingest.json_importer import IngestError, ingest_json
 from app.ingest.sword_importer import ingest_sword
+from app.logging import configure_logging
 
 
 def _cmd_init_db(_args: argparse.Namespace) -> int:
@@ -29,10 +30,11 @@ def _cmd_ingest_json(args: argparse.Namespace) -> int:
 
 def _cmd_ingest_sword(args: argparse.Namespace) -> int:
     try:
-        ingest_sword(Path(args.sword_path), args.module)
+        inserted = ingest_sword(Path(args.sword_path), args.module, replace=args.replace)
     except IngestError as exc:
         print(f"Ingest failed: {exc}", file=sys.stderr)
         return 1
+    print(f"Inserted {inserted} entries")
     return 0
 
 
@@ -55,16 +57,22 @@ def build_parser() -> argparse.ArgumentParser:
     ingest_json_parser.set_defaults(func=_cmd_ingest_json)
 
     ingest_sword_parser = subparsers.add_parser(
-        "ingest-sword", help="Ingest a SWORD module (requires export step)"
+        "ingest-sword", help="Ingest a SWORD commentary module directly"
     )
     ingest_sword_parser.add_argument("sword_path", help="Path to SWORD library")
     ingest_sword_parser.add_argument("module", help="SWORD module name")
+    ingest_sword_parser.add_argument(
+        "--replace",
+        action="store_true",
+        help="Delete existing entries for this commentary before import",
+    )
     ingest_sword_parser.set_defaults(func=_cmd_ingest_sword)
 
     return parser
 
 
 def main() -> int:
+    configure_logging()
     parser = build_parser()
     args = parser.parse_args()
     return args.func(args)
