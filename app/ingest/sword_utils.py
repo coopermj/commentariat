@@ -112,7 +112,16 @@ def list_verses_for_book(book: str, env: Dict[str, str] | None = None) -> List[T
     Note: Uses system SWORD path for KJV (not custom env) since KJV is typically
     installed system-wide, not bundled with commentary modules.
     """
-    output = run_diatheke(["-b", "KJV", "-f", "plain", "-k", book], env=env)
+    try:
+        output = run_diatheke(["-b", "KJV", "-f", "plain", "-k", book], env=env)
+    except RuntimeError as e:
+        logger.error("Failed to list verses for %s: %s", book, e)
+        return []
+
+    if not output.strip():
+        logger.warning("Empty output from KJV for book: %s", book)
+        return []
+
     refs: List[Tuple[int, int]] = []
     pattern = re.compile(r"^.+?\s+(\d+):(\d+):")
     for line in output.splitlines():
@@ -125,6 +134,10 @@ def list_verses_for_book(book: str, env: Dict[str, str] | None = None) -> List[T
         chapter = int(match.group(1))
         verse = int(match.group(2))
         refs.append((chapter, verse))
+
+    if not refs:
+        logger.warning("No verse refs parsed for %s (output: %s...)", book, output[:200])
+
     return refs
 
 

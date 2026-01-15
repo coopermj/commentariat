@@ -40,6 +40,16 @@ def run_ingestion() -> None:
     # Reconfigure logging in subprocess
     configure_logging()
 
+    # Test KJV access first
+    import subprocess
+    result = subprocess.run(
+        ["diatheke", "-b", "KJV", "-f", "plain", "-k", "Genesis 1:1"],
+        capture_output=True,
+        text=True,
+    )
+    logger.info("KJV test - returncode: %d, stdout: %s, stderr: %s",
+                result.returncode, result.stdout[:200] if result.stdout else "empty", result.stderr[:200] if result.stderr else "empty")
+
     sword_path = os.environ.get("SWORD_PATH", "/app/data/sword")
     mods_dir = Path(sword_path) / "mods.d"
 
