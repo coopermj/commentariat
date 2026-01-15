@@ -60,8 +60,9 @@ def run_ingestion() -> None:
         logger.warning("No SWORD modules found at %s", mods_dir)
         return
 
-    modules = [f.stem for f in mods_dir.glob("*.conf")]
-    logger.info("Ingesting modules: %s", modules)
+    # Get commentary modules (exclude KJV which is a Bible text)
+    modules = [f.stem for f in mods_dir.glob("*.conf") if f.stem.lower() != "kjv"]
+    logger.info("Ingesting commentary modules: %s", modules)
 
     for module in modules:
         logger.info("Starting ingestion of %s...", module)

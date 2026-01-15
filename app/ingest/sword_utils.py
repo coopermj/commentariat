@@ -202,6 +202,15 @@ def iter_sword_entries(
         # Use same SWORD_PATH for KJV (now bundled with other modules)
         refs = list_verses_for_book(canonical_name, env=module_env)
 
+        if not refs:
+            logger.warning("No refs for book %s", canonical_name)
+            continue
+
+        # Log first verse as debug sample
+        first_key = f"{canonical_name} {refs[0][0]}:{refs[0][1]}"
+        sample = run_diatheke(["-b", module, "-f", "plain", "-k", first_key], env=module_env)
+        logger.info("Sample query %s returned %d chars", first_key, len(sample))
+
         for chapter, verse in refs:
             key = f"{canonical_name} {chapter}:{verse}"
             text = run_diatheke(["-b", module, "-f", "plain", "-k", key], env=module_env)
