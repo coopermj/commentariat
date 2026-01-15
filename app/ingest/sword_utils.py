@@ -55,7 +55,10 @@ def load_about_text(conf_path: Path) -> str:
 
 
 def load_module_config(conf_path: Path) -> Dict[str, str]:
-    """Parse a SWORD module .conf file into a dictionary."""
+    """Parse a SWORD module .conf file into a dictionary.
+
+    Also extracts the module name from the [ModuleName] header.
+    """
     config: Dict[str, str] = {}
     lines = conf_path.read_text(encoding="utf-8").splitlines()
     current_key: str | None = None
@@ -64,6 +67,10 @@ def load_module_config(conf_path: Path) -> Dict[str, str]:
     for line in lines:
         line_stripped = line.rstrip()
         if line.startswith("#"):
+            continue
+        # Extract module name from [ModuleName] header
+        if line_stripped.startswith("[") and line_stripped.endswith("]"):
+            config["_module_name"] = line_stripped[1:-1]
             continue
         if "=" in line and not line.startswith(" ") and not line.startswith("\t"):
             if current_key:
@@ -173,6 +180,13 @@ def iter_sword_entries(
 
     if not conf_path.exists():
         raise FileNotFoundError(f"Module config not found: {conf_path}")
+
+    # Load config and get actual module name
+    config = load_module_config(conf_path)
+    actual_module_name = config.get("_module_name", module)
+    if actual_module_name != module:
+        logger.info("Using module name '%s' from config (filename was '%s')", actual_module_name, module)
+    module = actual_module_name
 
     about_text = load_about_text(conf_path)
     books_raw = extract_books_from_about(about_text)
